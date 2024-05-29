@@ -39,3 +39,33 @@ describe("GET /api/topics", () => {
       });
   });
 });
+
+describe("GET /api", () => {
+  test("200: responds with an object describing all available endpoints", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then(({ body }) => {
+        const { endpoints } = body;
+
+        expect(typeof endpoints).toBe("object");
+        expect(Array.isArray(endpoints)).toBe(false);
+
+        const endpointKeyValueArr = Object.entries(endpoints);
+        endpointKeyValueArr.forEach((routeObj, index) => {
+          const [exampleResponseChildKey] = Object.keys(
+            routeObj[1].exampleResponse
+          );
+
+          expect(typeof routeObj[0]).toBe("string"),
+            expect(routeObj[1]).toMatchObject({
+              description: expect.any(String),
+              queries: expect.any(Array),
+              exampleResponse: {
+                [exampleResponseChildKey]: expect.any(Array),
+              },
+            });
+        });
+      });
+  });
+});
