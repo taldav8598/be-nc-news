@@ -33,7 +33,7 @@ describe("GET /api/topics", () => {
 
   test("404: responds with a 'Not Found' message when an incorrect path is provided", () => {
     return request(app)
-      .get("/api/topics/not-a-route")
+      .get("/api/topi")
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("Not Found");
@@ -86,6 +86,37 @@ describe("GET /api/articles/article_id", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Bad Request");
+      });
+  });
+});
+
+describe("GET /api/articles", () => {
+  test("200: responds with an article array of article objects", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        articles.forEach((article) => {
+          expect(article).toMatchObject({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            topic: expect.any(String),
+            author: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(String),
+          });
+        });
+      });
+  });
+  test("404: responds with a 'Not Found' error message if the route is invalid", () => {
+    return request(app)
+      .get("/api/articl")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not Found");
       });
   });
 });

@@ -15,5 +15,6 @@ exports.handleGeneric404Errors = (req, res) => {
 };
 
 exports.handleServerErrors = (err, req, res, next) => {
+  console.log(err.stack);
   res.status(500).send({ msg: "Internal Server Error" });
 };
