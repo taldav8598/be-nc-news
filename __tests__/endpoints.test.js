@@ -3,6 +3,7 @@ const app = require("../app");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data/index");
+const endpointsJson = require("../endpoints.json");
 
 beforeEach(() => {
   console.log("seeding!");
@@ -47,25 +48,44 @@ describe("GET /api", () => {
       .expect(200)
       .then(({ body }) => {
         const { endpoints } = body;
+        expect(endpoints).toMatchObject(endpointsJson);
+      });
+  });
+});
 
-        expect(typeof endpoints).toBe("object");
-        expect(Array.isArray(endpoints)).toBe(false);
-
-        const endpointKeyValueArr = Object.entries(endpoints);
-        endpointKeyValueArr.forEach((routeObj, index) => {
-          const [exampleResponseChildKey] = Object.keys(
-            routeObj[1].exampleResponse
-          );
-
-          expect(typeof routeObj[0]).toBe("string"),
-            expect(routeObj[1]).toMatchObject({
-              description: expect.any(String),
-              queries: expect.any(Array),
-              exampleResponse: {
-                [exampleResponseChildKey]: expect.any(Array),
-              },
-            });
+describe("GET /api/articles/article_id", () => {
+  test("200: responds with an article object", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article).toMatchObject({
+          article_id: expect.any(Number),
+          title: expect.any(String),
+          topic: expect.any(String),
+          author: expect.any(String),
+          body: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_img_url: expect.any(String),
         });
+      });
+  });
+  test("404: responds with a 'Not Found' error message if the id is invalid", () => {
+    return request(app)
+      .get("/api/articles/9999")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not Found");
+      });
+  });
+  test("400: responds with a 'Bad Request' error message if the id does not exist", () => {
+    return request(app)
+      .get("/api/articles/notAnId")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
       });
   });
 });
