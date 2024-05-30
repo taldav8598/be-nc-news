@@ -69,3 +69,30 @@ exports.createNewArticleCommentById = async (article_id, requestBody) => {
       });
   }
 };
+
+exports.updateArticleNewVotesById = async (article_id, requestBody) => {
+  const { inc_votes } = requestBody;
+
+  if (!inc_votes) {
+    return Promise.reject({ status: 400, msg: "Bad Request" });
+  }
+
+  const article = await db.query(
+    `SELECT * FROM articles WHERE article_id = $1`,
+    [article_id]
+  );
+
+  if (article.rows.length) {
+    return db
+      .query(
+        `UPDATE articles 
+      SET votes = votes + $2 
+      WHERE article_id = $1 
+      RETURNING *;`,
+        [article_id, inc_votes]
+      )
+      .then(({ rows }) => {
+        return rows[0];
+      });
+  }
+};

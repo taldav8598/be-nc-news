@@ -207,3 +207,47 @@ describe("POST /api/articles/:article_id/comments", () => {
       });
   });
 });
+describe("PATCH /api/articles/:article_id/comments", () => {
+  test("200: responds with an updated article object", () => {
+    const newVotes = {
+      inc_votes: 100,
+    };
+    return request(app)
+      .patch("/api/articles/1/comments")
+      .send(newVotes)
+      .expect(200)
+      .then(({ body }) => {
+        const { updatedArticle } = body;
+        expect(updatedArticle).toMatchObject({
+          article_id: expect.any(Number),
+          title: expect.any(String),
+          topic: expect.any(String),
+          author: expect.any(String),
+          body: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_img_url: expect.any(String),
+        });
+      });
+  });
+  test("400: responds with a 'Bad Request' message when provided a malformed newVotes/newVotes missing required fields", () => {
+    const newVotes = {};
+    return request(app)
+      .patch("/api/articles/1/comments")
+      .send(newVotes)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+  test("400: responds with a 'Bad Request' when provided an object that fails schema validation", () => {
+    const newVotes = { inc_votes: NaN };
+    return request(app)
+      .patch("/api/articles/1/comments")
+      .send(newVotes)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+});
