@@ -139,7 +139,6 @@ describe("GET /api/articles/:article_id/comments", () => {
       .expect(200)
       .then(({ body }) => {
         const { comments } = body;
-        console.log(comments);
         comments.forEach((comment) => {
           expect(comment).toMatchObject({
             comment_id: expect.any(Number),
@@ -152,5 +151,20 @@ describe("GET /api/articles/:article_id/comments", () => {
         });
       });
   });
-  // TODO 404 and 400 test
+  test("404: responds with a 'Not Found' error message if the id is invalid", () => {
+    return request(app)
+      .get("/api/articles/9999/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not Found");
+      });
+  });
+  test("400: responds with a 'Bad Request' error message if the id does not exist", () => {
+    return request(app)
+      .get("/api/articles/notAnId/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
 });
