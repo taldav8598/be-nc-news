@@ -7,6 +7,7 @@ const {
   getAllArticles,
   getArticleCommentsById,
   postNewArticleCommentById,
+  patchArticleNewVotesById,
 } = require("./controllers/articles.controllers");
 const {
   handleCustomErrors,
@@ -30,6 +31,8 @@ app.get("/api/articles/:article_id", getArticleById);
 app.get("/api/articles/:article_id/comments", getArticleCommentsById);
 
 app.post("/api/articles/:article_id/comments", postNewArticleCommentById);
+
+app.patch("/api/articles/:article_id/comments", patchArticleNewVotesById);
 
 app.all("*", handleGeneric404Errors);
 

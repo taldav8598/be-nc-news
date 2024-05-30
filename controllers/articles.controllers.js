@@ -3,6 +3,7 @@ const {
   selectAllArticles,
   selectArticleCommentsById,
   createNewArticleCommentById,
+  updateArticleNewVotesById,
 } = require("../models/articles");
 
 exports.getArticleById = (req, res, next) => {
@@ -38,6 +39,16 @@ exports.postNewArticleCommentById = (req, res, next) => {
   return createNewArticleCommentById(article_id, requestBody)
     .then((comment) => {
       res.status(201).send({ comment });
+    })
+    .catch(next);
+};
+
+exports.patchArticleNewVotesById = (req, res, next) => {
+  const { article_id } = req.params;
+  const requestBody = req.body;
+  return updateArticleNewVotesById(article_id, requestBody)
+    .then((updatedArticle) => {
+      res.status(200).send({ updatedArticle });
     })
     .catch(next);
 };
