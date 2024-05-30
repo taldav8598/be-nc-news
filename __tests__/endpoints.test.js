@@ -111,7 +111,7 @@ describe("GET /api/articles", () => {
         });
       });
   });
-  test.only("200: responds with an article array of article objects sorted by date 'created_at' in descending order", () => {
+  test("200: responds with an article array of article objects sorted by date 'created_at' in descending order", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
@@ -133,7 +133,7 @@ describe("GET /api/articles", () => {
 });
 
 describe("GET /api/articles/:article_id/comments", () => {
-  test.only("200: responds with an array of all comments for the specified article", () => {
+  test("200: responds with an array of all comments for the specified article", () => {
     return request(app)
       .get("/api/articles/1/comments")
       .expect(200)
