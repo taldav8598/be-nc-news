@@ -37,3 +37,35 @@ exports.selectArticleCommentsById = (article_id) => {
       }
     });
 };
+
+exports.createNewArticleCommentById = async (article_id, requestBody) => {
+  const { username, body } = requestBody;
+
+  if (typeof username !== "string" || typeof body !== "string") {
+    return Promise.reject({ status: 400, msg: "Bad Request" });
+  }
+
+  const articleExists = await db.query(
+    `SELECT * FROM articles WHERE article_id = $1`,
+    [article_id]
+  );
+
+  const userExists = await db.query(`SELECT * FROM users WHERE username = $1`, [
+    username,
+  ]);
+
+  if (articleExists && userExists) {
+    return db
+      .query(
+        `WITH inserted_comment as (INSERT INTO comments (article_id, author, body)
+        VALUES ($1, $2, $3)
+        RETURNING *) 
+        SELECT users.username, body FROM inserted_comment
+        JOIN users ON users.username = inserted_comment.author`,
+        [article_id, username, body]
+      )
+      .then(({ rows }) => {
+        return rows[0];
+      });
+  }
+};

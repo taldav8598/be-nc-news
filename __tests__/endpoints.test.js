@@ -6,7 +6,6 @@ const data = require("../db/data/test-data/index");
 const endpointsJson = require("../endpoints.json");
 
 beforeEach(() => {
-  console.log("seeding!");
   return seed(data);
 });
 
@@ -162,6 +161,46 @@ describe("GET /api/articles/:article_id/comments", () => {
   test("400: responds with a 'Bad Request' error message if the id does not exist", () => {
     return request(app)
       .get("/api/articles/notAnId/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+});
+
+describe("POST /api/articles/:article_id/comments", () => {
+  test("201: responds with an object containing the posted comment", () => {
+    const userComment = {
+      username: "lurker",
+      body: "Hello world",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(userComment)
+      .expect(201)
+      .then(({ body }) => {
+        const { comment } = body;
+        expect(comment).toMatchObject({
+          username: expect.any(String),
+          body: expect.any(String),
+        });
+      });
+  });
+  test("400: responds with a 'Bad Request' message when provided a malformed userComment/userComment missing required fields", () => {
+    const userComment = {};
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(userComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+  test("400: responds with a 'Bad Request' when provided an object that fails schema validation", () => {
+    const userComment = { username: 1, body: 2 };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(userComment)
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Bad Request");

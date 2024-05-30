@@ -6,6 +6,7 @@ const {
   getArticleById,
   getAllArticles,
   getArticleCommentsById,
+  postNewArticleCommentById,
 } = require("./controllers/articles.controllers");
 const {
   handleCustomErrors,
@@ -16,6 +17,8 @@ const {
 
 const app = express();
 
+app.use(express.json());
+
 app.get("/api", getAllEndpoints);
 
 app.get("/api/topics", getAllTopics);
@@ -25,6 +28,8 @@ app.get("/api/articles", getAllArticles);
 app.get("/api/articles/:article_id", getArticleById);
 
 app.get("/api/articles/:article_id/comments", getArticleCommentsById);
+
+app.post("/api/articles/:article_id/comments", postNewArticleCommentById);
 
 app.all("*", handleGeneric404Errors);
 
