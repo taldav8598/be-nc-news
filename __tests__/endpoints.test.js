@@ -111,6 +111,17 @@ describe("GET /api/articles", () => {
         });
       });
   });
+  test.only("200: responds with an article array of article objects sorted by date 'created_at' in descending order", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeSortedBy("created_at", {
+          descending: true,
+        });
+      });
+  });
   test("404: responds with a 'Not Found' error message if the route is invalid", () => {
     return request(app)
       .get("/api/articl")
@@ -119,4 +130,27 @@ describe("GET /api/articles", () => {
         expect(body.msg).toBe("Not Found");
       });
   });
+});
+
+describe("GET /api/articles/:article_id/comments", () => {
+  test.only("200: responds with an array of all comments for the specified article", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        const { comments } = body;
+        console.log(comments);
+        comments.forEach((comment) => {
+          expect(comment).toMatchObject({
+            comment_id: expect.any(Number),
+            votes: expect.any(Number),
+            author: expect.any(String),
+            body: expect.any(String),
+            created_at: expect.any(String),
+            article_id: expect.any(Number),
+          });
+        });
+      });
+  });
+  // TODO 404 and 400 test
 });
