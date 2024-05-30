@@ -83,5 +83,17 @@
         }
       ]
     }
+  },
+  "POST /api/articles/:id/comments": {
+    "description": "serves an object containing a new comment created for a specified article id",
+    "queries": [],
+    "exampleResponse": {
+      "comments": [
+        {
+          "username": "lurker",
+          "body": "Hello world"
+        }
+      ]
+    }
   }
 }
