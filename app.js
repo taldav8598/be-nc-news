@@ -9,6 +9,7 @@ const {
   postNewArticleCommentById,
   patchArticleNewVotesById,
 } = require("./controllers/articles.controllers");
+const { deleteCommentById } = require("./controllers/comments.controllers");
 const {
   handleCustomErrors,
   handlePsqlErrors,
@@ -33,6 +34,8 @@ app.get("/api/articles/:article_id/comments", getArticleCommentsById);
 app.post("/api/articles/:article_id/comments", postNewArticleCommentById);
 
 app.patch("/api/articles/:article_id/comments", patchArticleNewVotesById);
+
+app.delete("/api/comments/:comment_id", deleteCommentById);
 
 app.all("*", handleGeneric404Errors);
 
