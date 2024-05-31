@@ -1,15 +1,29 @@
 const db = require("../db/connection");
 
-exports.selectArticleById = (article_id) => {
-  return db
-    .query("SELECT * FROM articles WHERE article_id = $1", [article_id])
-    .then(({ rows }) => {
-      if (rows.length === 0) {
-        return Promise.reject({ status: 404, msg: "Not Found" });
-      } else {
-        return rows[0];
-      }
-    });
+exports.selectArticleById = async (article_id, requestQuery) => {
+  let queryStr = `SELECT *`;
+
+  const { comment_count } = requestQuery;
+
+  const bool_comment_count = comment_count === "true" ? true : comment_count;
+
+  if (!comment_count && Object.keys(requestQuery).length > 0) {
+    return Promise.reject({ status: 400, msg: "Bad Request" });
+  }
+
+  if (comment_count && typeof bool_comment_count === "boolean") {
+    queryStr += `, COUNT(comments.body) + COUNT(articles.body) as comment_count FROM articles INNER JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = $1 GROUP BY articles.article_id, comments.article_id, comments.comment_id`;
+  } else {
+    queryStr += `FROM articles WHERE article_id = $1`;
+  }
+
+  return db.query(queryStr, [article_id]).then(({ rows }) => {
+    if (rows.length === 0) {
+      return Promise.reject({ status: 404, msg: "Not Found" });
+    } else {
+      return rows[0];
+    }
+  });
 };
 
 exports.selectAllArticles = (query) => {
