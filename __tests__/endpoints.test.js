@@ -52,7 +52,7 @@ describe("GET /api", () => {
   });
 });
 
-describe.only("GET /api/articles/article_id", () => {
+describe("GET /api/articles/article_id", () => {
   test("200: responds with an article object", () => {
     return request(app)
       .get("/api/articles/1")
@@ -332,7 +332,7 @@ describe("GET /api/articles?topic", () => {
   });
 });
 
-describe.only("GET /api/articles/:article_id?comment_count", () => {
+describe("GET /api/articles/:article_id?comment_count", () => {
   test("200: responds with an article object containing the comment count", () => {
     return request(app)
       .get("/api/articles/1?comment_count=true")
