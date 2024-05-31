@@ -251,3 +251,25 @@ describe("PATCH /api/articles/:article_id/comments", () => {
       });
   });
 });
+
+describe("DELETE /api/articles/:article_id/comments", () => {
+  test("204: responds with a no content", () => {
+    return request(app).delete("/api/comments/1").expect(204);
+  });
+  test("404: responds with 'Not Found' error message", () => {
+    return request(app)
+      .delete("/api/comments/999999999")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not Found");
+      });
+  });
+  test("400: responds with 'Bad Request' error message", () => {
+    return request(app)
+      .delete("/api/comments/notAnId")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+});
