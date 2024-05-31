@@ -301,7 +301,7 @@ describe("GET /api/users", () => {
   });
 });
 
-describe.only("GET /api/articles?topic", () => {
+describe("GET /api/articles?topic", () => {
   test("200: responds with an array of objects containing the provided topic", () => {
     return request(app)
       .get("/api/articles?topic=mitch")
