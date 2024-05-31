@@ -300,3 +300,34 @@ describe("GET /api/users", () => {
       });
   });
 });
+
+describe("GET /api/articles?topic", () => {
+  test("200: responds with an array of objects containing the provided topic", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        articles.forEach((article) => {
+          expect(article).toMatchObject({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            topic: expect.any(String),
+            author: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(String),
+          });
+        });
+      });
+  });
+  test("400: responds with 'Bad Request' error message", () => {
+    return request(app)
+      .get("/api/articles?not_a_topic=helloWorld")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+});

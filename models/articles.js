@@ -12,18 +12,32 @@ exports.selectArticleById = (article_id) => {
     });
 };
 
-exports.selectAllArticles = () => {
-  return db
-    .query(
-      `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, 
+exports.selectAllArticles = (query) => {
+  const { topic } = query;
+
+  const keys = Object.keys(query);
+
+  const isTopicQueryOrBaseUrl =
+    keys.length === 0 || keys.filter((item) => item === "topic").length > 0;
+
+  if (!isTopicQueryOrBaseUrl) {
+    return Promise.reject({ status: 400, msg: "Bad Request" });
+  }
+
+  const queryValues = [];
+  let queryStr = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, 
       COUNT(comments.body) + COUNT(articles.body) as comment_count FROM articles 
-      INNER JOIN comments ON articles.article_id = comments.article_id 
-      GROUP BY articles.article_id, comments.article_id 
-      ORDER BY articles.created_at DESC;`
-    )
-    .then(({ rows }) => {
-      return rows;
-    });
+      INNER JOIN comments ON articles.article_id = comments.article_id`;
+
+  if (topic) {
+    queryStr += ` WHERE articles.topic = $1`;
+    queryValues.push(topic);
+  }
+
+  queryStr += ` GROUP BY articles.article_id, comments.article_id ORDER BY articles.created_at DESC;`;
+  return db.query(queryStr, queryValues).then(({ rows }) => {
+    return rows;
+  });
 };
 
 exports.selectArticleCommentsById = (article_id) => {
