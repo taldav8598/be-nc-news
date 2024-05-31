@@ -8,7 +8,8 @@ const {
 
 exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
-  return selectArticleById(article_id)
+  const requestQuery = req.query;
+  return selectArticleById(article_id, requestQuery)
     .then((article) => {
       res.status(200).send({ article });
     })
