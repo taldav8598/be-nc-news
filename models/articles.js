@@ -1,7 +1,7 @@
 const db = require("../db/connection");
 
 exports.selectArticleById = async (article_id, requestQuery) => {
-  let queryStr = `SELECT *`;
+  let queryStr = `SELECT`;
 
   const { comment_count } = requestQuery;
 
@@ -12,9 +12,15 @@ exports.selectArticleById = async (article_id, requestQuery) => {
   }
 
   if (comment_count && typeof bool_comment_count === "boolean") {
-    queryStr += `, COUNT(comments.body) + COUNT(articles.body) as comment_count FROM articles INNER JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = $1 GROUP BY articles.article_id, comments.article_id, comments.comment_id`;
+    queryStr += ` articles.*, COUNT(comments.body) 
+    AS comment_count 
+    FROM comments 
+    INNER JOIN articles 
+    ON comments.article_id = articles.article_id 
+    WHERE articles.article_id = $1 
+    GROUP BY articles.article_id;`;
   } else {
-    queryStr += `FROM articles WHERE article_id = $1`;
+    queryStr += `* FROM articles WHERE article_id = $1`;
   }
 
   return db.query(queryStr, [article_id]).then(({ rows }) => {
@@ -39,8 +45,8 @@ exports.selectAllArticles = (query) => {
   }
 
   const queryValues = [];
-  let queryStr = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, 
-      COUNT(comments.body) + COUNT(articles.body) as comment_count FROM articles 
+  let queryStr = `SELECT articles.*, 
+      COUNT(comments.body) as comment_count FROM articles 
       INNER JOIN comments ON articles.article_id = comments.article_id`;
 
   if (topic) {
