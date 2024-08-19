@@ -3,7 +3,6 @@ const cors = require("cors");
 
 const api = require("./routes/api");
 
-const { getAllTopics } = require("./controllers/topics.controllers");
 const { getAllUsers } = require("./controllers/users.controllers");
 
 const {
@@ -19,8 +18,6 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api", api);
-
-app.get("/api/topics", getAllTopics);
 
 app.get("/api/users", getAllUsers);
 
