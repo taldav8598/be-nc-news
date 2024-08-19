@@ -5,13 +5,7 @@ const api = require("./routes/api");
 
 const { getAllTopics } = require("./controllers/topics.controllers");
 const { getAllUsers } = require("./controllers/users.controllers");
-const {
-  getArticleById,
-  getAllArticles,
-  getArticleCommentsById,
-  postNewArticleCommentById,
-  patchArticleNewVotesById,
-} = require("./controllers/articles.controllers");
+
 const { deleteCommentById } = require("./controllers/comments.controllers");
 const {
   handleCustomErrors,
@@ -29,17 +23,7 @@ app.use("/api", api);
 
 app.get("/api/topics", getAllTopics);
 
-app.get("/api/articles", getAllArticles);
-
 app.get("/api/users", getAllUsers);
-
-app.get("/api/articles/:article_id", getArticleById);
-
-app.get("/api/articles/:article_id/comments", getArticleCommentsById);
-
-app.post("/api/articles/:article_id/comments", postNewArticleCommentById);
-
-app.patch("/api/articles/:article_id/comments", patchArticleNewVotesById);
 
 app.delete("/api/comments/:comment_id", deleteCommentById);
 
