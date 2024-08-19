@@ -1,8 +1,9 @@
 const express = require("express");
 const cors = require("cors");
 
+const api = require("./routes/api");
+
 const { getAllTopics } = require("./controllers/topics.controllers");
-const { getAllEndpoints } = require("./controllers/api.controllers");
 const { getAllUsers } = require("./controllers/users.controllers");
 const {
   getArticleById,
@@ -24,7 +25,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get("/api", getAllEndpoints);
+app.use("/api", api);
 
 app.get("/api/topics", getAllTopics);
 
