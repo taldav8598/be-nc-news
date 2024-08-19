@@ -3,8 +3,6 @@ const cors = require("cors");
 
 const api = require("./routes/api");
 
-const { getAllUsers } = require("./controllers/users.controllers");
-
 const {
   handleCustomErrors,
   handlePsqlErrors,
@@ -18,8 +16,6 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api", api);
-
-app.get("/api/users", getAllUsers);
 
 app.all("*", handleGeneric404Errors);
 
